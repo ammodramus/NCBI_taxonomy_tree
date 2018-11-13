@@ -1,5 +1,7 @@
 # NCBI_taxonomy_tree
 
+A simple fork of this to turn it into a script for getting the names of ancestors of a particular node given .dmp files and a list of NCBI TaxIDs.
+
 The NCBI Taxonomy database is a curated set of names and classifications for all of the organisms that are represented in GenBank (http://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/).
 It can be accessed via http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi or it can be downloaded from ftp://ftp.ncbi.nih.gov/pub/taxonomy/ in the form of 2 files : nodes.dmp for the structure of the tree and names.dmp for the names of the different nodes.
 
