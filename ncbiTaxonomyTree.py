@@ -295,25 +295,24 @@ class NcbiTaxonomyTree(object):
      
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('nodesdmp', help = 'file in .dmp format with the nodes')
+    parser.add_argument('namesdmp', help = 'file in .dmp format with the names')
+    parser.add_argument('taxidfile', help = 'file with NCBI TaxIDs, one per line')
+    args = parser.parse_args()
 
-    log.disabled = True
-    log.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(module)-8s l.%(lineno)-3d : %(message)s')
-    steam_handler = logging.StreamHandler(sys.stdout)
-    steam_handler.setLevel(logging.DEBUG)
-    formatter2 = logging.Formatter('%(asctime)s %(levelname)-8s l.%(lineno)-3d : %(message)s')
-    steam_handler.setFormatter(formatter2)
-    log.addHandler(steam_handler)
-    # file_handler = logging.FileHandler(os.path.dirname(mgffilename_in) + os.sep + os.path.basename(mgffilename_in) + ".log", mode='wb', encoding=None, delay=0)
-    # file_handler.setLevel(logging.DEBUG)
-    # file_handler.setFormatter(formatter)
-    # log.addHandler(file_handler)
+    tree = NcbiTaxonomyTree(nodes_filename=args.nodesdmp, names_filename=args.namesdmp)
+    taxids = []
+    with open(args.taxidfile) as fin:
+        for line in fin:
+            try:
+                taxids.append(int(line.strip()))
+            except:
+                raise ValueError('could not read integer TaxID: {}'.format(line))
 
-    import tarfile
-    with tarfile.open("names+nodes_test.tar.gz", 'r:gz') as tfile:
-        tfile.extractall('.')
-
-    import doctest
-    doctest.testmod(verbose=True)
-
-    
+    asc = tree.getAscendantsWithRanksAndNames(taxids, only_std_ranks=True)
+    for taxid, tax_asc in asc.iteritems():
+        output = [taxid] + [el.name for el in tax_asc[::-1]]
+        print '\t'.join([str(el) for el in output])
